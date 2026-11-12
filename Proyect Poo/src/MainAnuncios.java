@@ -21,7 +21,7 @@ public class MainAnuncios {
             JOptionPane.showMessageDialog(null, "Correo o contraseña incorrectos.");
             System.exit(0);
         }
-        if (!(usuario instanceof Lider)) {
+        if (!usuario.getRango().puedeAdministrarClub() || !(usuario instanceof Lider)) {
             JOptionPane.showMessageDialog(null, "Solo un líder puede editar o eliminar anuncios.");
             System.exit(0);
         }

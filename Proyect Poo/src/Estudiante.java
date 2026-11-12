@@ -12,6 +12,11 @@ public class Estudiante extends Usuario implements Serializable {
         this.clubes = new ArrayList<>();
     }
 
+    @Override
+    public Rango getRango() {
+        return Rango.ESTUDIANTE;
+    }
+
     public String getCarrera() {
         return carrera;
     }

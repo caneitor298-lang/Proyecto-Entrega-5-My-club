@@ -19,12 +19,12 @@ public class RegistroLiderView extends JPanel {
         titulo.setForeground(Estilos.VERDE);
         int fila = 0;
         agregar(formulario, titulo, fila++);
-        agregar(formulario, new JLabel("El administrador debe aprobar la cuenta y el club."), fila++);
+        agregar(formulario, new JLabel("<html>Solo pueden solicitarlo cuentas ya creadas como <b>estudiante</b>.<br>"
+                + "Si aún no tienes cuenta, regístrate primero como estudiante. "
+                + "El administrador debe aprobar la solicitud.</html>"), fila++);
 
-        JTextField nombre = campo("nombreLider");
         JTextField carnet = campo("carnetLider");
         JTextField edad = campo("edadLider");
-        JTextField carrera = campo("carreraLider");
         JTextField nombreClub = campo("nombreClubLider");
         JTextField correo = campo("correoLider");
         JTextField ubicacion = campo("ubicacionClubLider");
@@ -39,21 +39,16 @@ public class RegistroLiderView extends JPanel {
         categoria.setName("categoriaClubLider");
         JPasswordField contrasena = new JPasswordField();
         contrasena.setName("contrasenaLider");
-        JPasswordField confirmar = new JPasswordField();
-        confirmar.setName("confirmarLider");
 
-        fila = agregarCampo(formulario, "Nombre completo", nombre, fila);
+        fila = agregarCampo(formulario, "Correo de tu cuenta de estudiante", correo, fila);
+        fila = agregarCampo(formulario, "Contraseña de tu cuenta de estudiante", contrasena, fila);
         fila = agregarCampo(formulario, "Carné", carnet, fila);
         fila = agregarCampo(formulario, "Edad", edad, fila);
-        fila = agregarCampo(formulario, "Carrera", carrera, fila);
-        fila = agregarCampo(formulario, "Correo institucional", correo, fila);
         fila = agregarCampo(formulario, "Nombre del club que administrará", nombreClub, fila);
         fila = agregarCampo(formulario, "Categoría del club", categoria, fila);
         fila = agregarCampo(formulario, "Descripción del club", new JScrollPane(descripcion), fila);
         fila = agregarCampo(formulario, "Ubicación", ubicacion, fila);
         fila = agregarCampo(formulario, "Horario", horario, fila);
-        fila = agregarCampo(formulario, "Contraseña (mínimo 8 caracteres)", contrasena, fila);
-        fila = agregarCampo(formulario, "Confirmar contraseña", confirmar, fila);
 
         JButton enviar = new JButton("Enviar solicitud de líder");
         enviar.setName("enviarSolicitudLider");
@@ -72,11 +67,7 @@ public class RegistroLiderView extends JPanel {
 
         enviar.addActionListener(e -> {
             char[] clave = contrasena.getPassword();
-            char[] clave2 = confirmar.getPassword();
             try {
-                if (!Arrays.equals(clave, clave2)) {
-                    throw new IllegalArgumentException("Las contraseñas no coinciden.");
-                }
                 int edadIngresada;
                 try {
                     edadIngresada = Integer.parseInt(edad.getText().trim());
@@ -84,22 +75,19 @@ public class RegistroLiderView extends JPanel {
                     throw new IllegalArgumentException("La edad debe ser un número entero.");
                 }
                 SolicitudLider enviada = controlador.enviarSolicitud(
-                    carnet.getText(), nombre.getText(), edadIngresada,
-                    correo.getText(), carrera.getText(), new String(clave),
+                    correo.getText(), new String(clave), carnet.getText(), edadIngresada,
                     nombreClub.getText(), descripcion.getText(),
                     (String) categoria.getSelectedItem(), ubicacion.getText(), horario.getText()
                 );
                 JOptionPane.showMessageDialog(this,
                     "Solicitud de " + enviada.getNombreClub() + " enviada y guardada. "
-                    + "Podrás iniciar sesión cuando el administrador la acepte.");
+                    + "Cuando el administrador la acepte, tu cuenta pasará a rango Líder.");
                 volver.run();
             } catch (RuntimeException ex) {
                 estado.setText(ex.getMessage());
             } finally {
                 Arrays.fill(clave, '\0');
-                Arrays.fill(clave2, '\0');
                 contrasena.setText("");
-                confirmar.setText("");
             }
         });
         regresar.addActionListener(e -> volver.run());

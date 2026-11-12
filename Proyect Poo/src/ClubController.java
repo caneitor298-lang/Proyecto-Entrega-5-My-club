@@ -27,12 +27,14 @@ public class ClubController {
     }
     public boolean unirEstudianteAClub(Estudiante estudiante, Club club) {
         validarUsuarioYClub(estudiante, club);
+        validarRangoEstudiante(estudiante);
         if (!estudiante.unirseClub(club)) return false;
         datos.guardar();
         return true;
     }
     public boolean eliminarEstudianteDeClub(Estudiante estudiante, Club club) {
         validarUsuarioYClub(estudiante, club);
+        validarRangoEstudiante(estudiante);
         if (!estudiante.salirClub(club)) return false;
         datos.guardar();
         return true;
@@ -74,9 +76,15 @@ public class ClubController {
         return miembros;
     }
 
+    private void validarRangoEstudiante(Usuario usuario) {
+        if (!usuario.getRango().puedeUnirseAClubes())
+            throw new IllegalArgumentException("Solo un estudiante puede unirse a clubes o salir de ellos.");
+    }
+
     private void validarLider(Usuario usuario, Club club) {
         validarUsuarioYClub(usuario, club);
-        if (!(usuario instanceof Lider) || ((Lider) usuario).getClubAdministrado() != club)
+        if (!usuario.getRango().puedeAdministrarClub() || !(usuario instanceof Lider)
+                || ((Lider) usuario).getClubAdministrado() != club)
             throw new IllegalArgumentException("Solo el líder de este club puede modificarlo.");
     }
     private void validarTexto(String texto, String nombre, int maximo) {

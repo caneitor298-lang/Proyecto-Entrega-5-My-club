@@ -29,6 +29,11 @@ public class Lider extends Usuario implements Serializable {
         this.carrera = carrera;
     }
 
+    @Override
+    public Rango getRango() {
+        return Rango.LIDER;
+    }
+
     public Club getClubAdministrado() {
         return clubAdministrado;
     }

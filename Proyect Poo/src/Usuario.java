@@ -13,6 +13,11 @@ public class Usuario implements Serializable {
         this.contrasena = contrasena;
     }
 
+    /** Rango del usuario; cada subclase define el suyo. */
+    public Rango getRango() {
+        return Rango.ESTUDIANTE;
+    }
+
     public String getNombre() {
         return nombre;
     }

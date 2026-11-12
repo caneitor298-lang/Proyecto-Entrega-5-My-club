@@ -34,6 +34,9 @@ public class AnunciosController {
         if (lider == null || !datos.getUsuarios().contains(lider)) {
             throw new IllegalArgumentException("Usuario no registrado.");
         }
+        if (!lider.getRango().puedeAdministrarClub()) {
+            throw new IllegalArgumentException("Solo un líder puede editar anuncios.");
+        }
         if (!datos.getClubes().contains(lider.getClubAdministrado())) {
             throw new IllegalArgumentException("Club no registrado.");
         }

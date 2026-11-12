@@ -18,22 +18,38 @@ public class SolicitudLider implements Serializable {
     private final String categoria;
     private final String ubicacion;
     private final String horario;
+    private final boolean esRenuncia;
+    private final boolean esInvitacion;
     private EstadoSolicitud estado = EstadoSolicitud.PENDIENTE;
     private LocalDateTime fechaRevision;
     private String revisadoPor = "";
     private String motivoDenegacion = "";
 
-    // Se construye después de validar el formulario en SolicitudesController.
     public SolicitudLider(String carnet, String nombre, String correo, String carrera,
                           String contrasena, String nombreClub, String descripcion,
                           String categoria, String ubicacion, String horario) {
         this(carnet, nombre, 0, correo, carrera, contrasena, nombreClub,
-                descripcion, categoria, ubicacion, horario);
+                descripcion, categoria, ubicacion, horario, false, false);
     }
 
     public SolicitudLider(String carnet, String nombre, int edad, String correo, String carrera,
                           String contrasena, String nombreClub, String descripcion,
                           String categoria, String ubicacion, String horario) {
+        this(carnet, nombre, edad, correo, carrera, contrasena, nombreClub,
+                descripcion, categoria, ubicacion, horario, false, false);
+    }
+
+    public SolicitudLider(String carnet, String nombre, int edad, String correo, String carrera,
+                          String contrasena, String nombreClub, String descripcion,
+                          String categoria, String ubicacion, String horario, boolean esRenuncia) {
+        this(carnet, nombre, edad, correo, carrera, contrasena, nombreClub,
+                descripcion, categoria, ubicacion, horario, esRenuncia, false);
+    }
+
+    public SolicitudLider(String carnet, String nombre, int edad, String correo, String carrera,
+                          String contrasena, String nombreClub, String descripcion,
+                          String categoria, String ubicacion, String horario,
+                          boolean esRenuncia, boolean esInvitacion) {
         this.carnet = carnet;
         this.edad = edad;
         this.nombre = nombre;
@@ -45,6 +61,8 @@ public class SolicitudLider implements Serializable {
         this.categoria = categoria;
         this.ubicacion = ubicacion;
         this.horario = horario;
+        this.esRenuncia = esRenuncia;
+        this.esInvitacion = esInvitacion;
     }
 
     public String getId() { return id; }
@@ -59,6 +77,8 @@ public class SolicitudLider implements Serializable {
     public String getCategoria() { return categoria; }
     public String getUbicacion() { return ubicacion; }
     public String getHorario() { return horario; }
+    public boolean isEsRenuncia() { return esRenuncia; }
+    public boolean isEsInvitacion() { return esInvitacion; }
     public EstadoSolicitud getEstado() { return estado; }
     public LocalDateTime getFechaRevision() { return fechaRevision; }
     public String getRevisadoPor() { return revisadoPor; }
@@ -69,12 +89,19 @@ public class SolicitudLider implements Serializable {
     void resolver(EstadoSolicitud estado, Administrador administrador, String motivo) {
         this.estado = estado;
         this.fechaRevision = LocalDateTime.now();
-        this.revisadoPor = administrador.getCorreo();
+        this.revisadoPor = administrador != null ? administrador.getCorreo() : "";
         this.motivoDenegacion = motivo;
         this.contrasena = null;
     }
 
-    // Permite deshacer la decisión si el archivo no se pudo guardar.
+    void resolverPorEstudiante(EstadoSolicitud estado, String correoEstudiante, String motivo) {
+        this.estado = estado;
+        this.fechaRevision = LocalDateTime.now();
+        this.revisadoPor = correoEstudiante;
+        this.motivoDenegacion = motivo == null ? "" : motivo;
+        this.contrasena = null;
+    }
+
     void restaurarPendiente(String contrasena) {
         this.estado = EstadoSolicitud.PENDIENTE;
         this.fechaRevision = null;
