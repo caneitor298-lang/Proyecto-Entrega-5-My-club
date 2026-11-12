@@ -2,7 +2,6 @@ import java.awt.*;
 import java.util.Arrays;
 import javax.swing.*;
 
-/** El formulario guarda una solicitud; la cuenta se crea cuando el administrador la acepta. */
 public class RegistroLiderView extends JPanel {
     private static final long serialVersionUID = 1L;
 

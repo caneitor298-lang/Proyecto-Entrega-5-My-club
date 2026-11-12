@@ -115,26 +115,11 @@ public class VentanaPrincipal extends JFrame {
             Estilos.estilizarBoton(perfil);
             perfil.addActionListener(e -> mostrarPerfil());
             navegacion.add(perfil);
-
-            SolicitudesController sc = new SolicitudesController(datos);
-            if (!sc.obtenerInvitacionesPendientes(usuario).isEmpty()) {
-                JButton invitaciones = new JButton("Invitaciones de liderazgo");
-                Estilos.estilizarBoton(invitaciones);
-                invitaciones.addActionListener(e -> mostrarInvitaciones());
-                navegacion.add(invitaciones);
-            }
         } else {
             JButton administrar = new JButton("Administrar mi club");
             Estilos.estilizarBoton(administrar);
             administrar.addActionListener(e -> mostrarClub(((Lider) usuario).getClubAdministrado(), this::mostrarInicio));
             navegacion.add(administrar);
-
-            if (usuario.getRango().puedeSolicitarRenuncia()) {
-                JButton renunciar = new JButton("Solicitar volver a estudiante");
-                Estilos.estilizarBotonPeligro(renunciar);
-                renunciar.addActionListener(e -> solicitarRenuncia());
-                navegacion.add(renunciar);
-            }
         }
 
         JButton salir = new JButton("Cerrar sesión");
@@ -219,39 +204,6 @@ public class VentanaPrincipal extends JFrame {
         tarjetas.show(contenido, "perfil");
         contenido.revalidate();
         contenido.repaint();
-    }
-
-    /** Muestra las invitaciones de liderazgo pendientes del estudiante. */
-    public void mostrarInvitaciones() {
-        if (usuario == null || !usuario.getRango().puedeUnirseAClubes()) return;
-        InvitacionesView panel = new InvitacionesView(
-                usuario,
-                new SolicitudesController(datos),
-                this::mostrarLogin,   // tras aceptar, cerrar sesión para recargar como líder
-                this::mostrarInicio
-        );
-        if (edicion != null) contenido.remove(edicion);
-        edicion = panel;
-        contenido.add(edicion, "invitaciones");
-        tarjetas.show(contenido, "invitaciones");
-        contenido.revalidate();
-        contenido.repaint();
-    }
-
-    private void solicitarRenuncia() {
-        if (usuario == null || !usuario.getRango().puedeSolicitarRenuncia()) return;
-        int respuesta = JOptionPane.showConfirmDialog(this,
-                "¿Solicitar al administrador dejar de ser líder y volver a ser estudiante?\n"
-                + "Tu club se mantendrá, pero ya no podrás administrarlo hasta que se apruebe.",
-                "Renunciar al liderazgo", JOptionPane.YES_NO_OPTION);
-        if (respuesta != JOptionPane.YES_OPTION) return;
-        try {
-            new SolicitudesController(datos).enviarSolicitudRenuncia(usuario);
-            JOptionPane.showMessageDialog(this,
-                    "Solicitud enviada. El administrador debe aceptarla para que tu cuenta pase a Estudiante.");
-        } catch (RuntimeException ex) {
-            mostrarError(this, ex);
-        }
     }
 }
 
