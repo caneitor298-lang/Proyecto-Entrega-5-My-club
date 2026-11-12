@@ -11,4 +11,4 @@ Lider1234
 
 Cuenta de Administrador:
 admin@uvg.edu.gt
-Admin123
+Admin1234
