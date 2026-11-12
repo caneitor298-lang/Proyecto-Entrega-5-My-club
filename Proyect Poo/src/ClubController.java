@@ -63,7 +63,6 @@ public class ClubController {
         datos.guardar();
     }
 
-    /** Devuelve los estudiantes inscritos en el club (membresía se guarda en cada Estudiante). */
     public ArrayList<Estudiante> obtenerMiembros(Usuario usuarioLider, Club club) {
         validarLider(usuarioLider, club);
         ArrayList<Estudiante> miembros = new ArrayList<>();
